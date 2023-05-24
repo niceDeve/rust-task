@@ -1,7 +1,7 @@
 use crate::{calculate_balance_changes, Balance, DenomDefinition, MultiSend, Coin};
 
-// The Test_Case struct represents a single test case. It contains the original balances, definitions, and multi-send transaction data, as well as the expected result.
-pub struct Test_Case {
+// The TestCase struct represents a single test case. It contains the original balances, definitions, and multi-send transaction data, as well as the expected result.
+pub struct TestCase {
     original_balances: Vec<Balance>,
     definitions: Vec<DenomDefinition>,
     multi_send_tx: MultiSend,
@@ -41,14 +41,14 @@ fn compare_balances(_expected_balances: &Vec<Balance>, _result_balances: &Vec<Ba
     return true;
 }
 
-// The Test_Cases struct represents a group of test cases with a related name.
-pub struct Test_Cases {
+// The TestCases struct represents a group of test cases with a related name.
+pub struct TestCases {
     case_name: String,
-    cases: Vec<Test_Case>,
+    cases: Vec<TestCase>,
 }
 
 // The test function executes a single test case by calculating the result balances and comparing them to the expected balances using compare_balances.
-fn test(test_case: Test_Case) {
+fn test(test_case: TestCase) {
     let result_balances = calculate_balance_changes(
         test_case.original_balances,
         test_case.definitions,
@@ -68,10 +68,25 @@ fn test(test_case: Test_Case) {
 #[test]
 // The test_all function runs all of the test cases defined in the test_cases module, which is not shown here.
 fn test_all() {
-    let vec_test_cases: Vec<Test_Cases> = vec![
-        Test_Cases {
+    /*
+there are 9 types of test cases here.
+    -no issuer on sender or receiver 
+    -one input, one output, one denom
+    -multi input, multi output, multi denom
+    -zero input //case inputs of Multisend is 0
+    -input output same //case inputs and outputs of MultiSend are equal.
+    -input output mismatch
+    -min balance // case original balace is min for sending a coin.
+    -min balance - 1 : // case original balace is min-1 for sending a coin.
+    -not enough balance
+I made one test case for each type.
+In fact, I can add many more test cases. 
+This is just for demo. 
+*/
+    let vec_test_cases: Vec<TestCases> = vec![
+        TestCases {
             case_name: "one input, one output, one denom".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![Balance {
                     address: "account1".to_string(),
                     coins: vec![Coin {
@@ -126,9 +141,9 @@ fn test_all() {
                 ]),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "no issuer on sender or receiver".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![
                     Balance {
                         address: "account1".to_string(),
@@ -228,9 +243,9 @@ fn test_all() {
                 ]),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "multi input, multi output, multi denom".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![
                     Balance {
                         address: "addr1".to_string(),
@@ -401,9 +416,9 @@ fn test_all() {
                 ]),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "zero input".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![Balance {
                     address: "account1".to_string(),
                     coins: vec![Coin {
@@ -436,9 +451,9 @@ fn test_all() {
                 result: Ok(vec![]),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "input output same".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![
                     Balance {
                         address: "addr1".to_string(),
@@ -594,9 +609,9 @@ fn test_all() {
                 ]),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "input output mismatch".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![Balance {
                     address: "account1".to_string(),
                     coins: vec![Coin {
@@ -629,9 +644,9 @@ fn test_all() {
                 result: Err("notice that input and output does not match".to_string()),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "min balance".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![Balance {
                     address: "account1".to_string(),
                     coins: vec![Coin {
@@ -686,9 +701,9 @@ fn test_all() {
                 ]),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "min balance - 1".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![Balance {
                     address: "account1".to_string(),
                     coins: vec![Coin {
@@ -723,9 +738,9 @@ fn test_all() {
                 ),
             }],
         },
-        Test_Cases {
+        TestCases {
             case_name: "not enough balance".to_string(),
-            cases: vec![Test_Case {
+            cases: vec![TestCase {
                 original_balances: vec![Balance {
                     address: "account1".to_string(),
                     coins: vec![],
